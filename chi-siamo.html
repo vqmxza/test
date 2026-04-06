@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iMGN_WEB</title>
+    <link rel="icon" type="image/x-icon" href="https://image2url.com/r2/default/images/1775438610943-489b1a25-1851-4c64-9331-56b56bb310ad.png">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* RESET & BASE STYLES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: #f4f4f4;
+            font-family: 'Space Mono', monospace;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-position: center center;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.08;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        h1, h2, h3, .nav-logo {
+            font-family: 'Syncopate', sans-serif;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        a {
+            color: #f4f4f4;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .border-box {
+            border: 2px solid #f4f4f4;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            background: #0a0a0a;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #f4f4f4;
+            color: #0a0a0a;
+            padding: 15px 30px;
+            font-family: 'Syncopate', sans-serif;
+            font-weight: bold;
+            font-size: 1rem;
+            border: 2px solid #f4f4f4;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.1s linear;
+            box-shadow: 6px 6px 0px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:hover {
+            background-color: #0a0a0a;
+            color: #f4f4f4;
+            box-shadow: -6px -6px 0px #f4f4f4;
+            transform: translate(6px, 6px);
+        }
+
+        /* NAVBAR */
+        nav {
+            border-bottom: 2px solid #f4f4f4;
+            padding: 20px 0;
+            background: #0a0a0a;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-logo {
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            animation: pulse 2s infinite;
+        }
+        .nav-links a {
+            margin-left: 20px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid transparent;
+        }
+        .nav-links a:hover {
+            background: #f4f4f4;
+            color: #0a0a0a;
+            padding: 5px;
+        }
+
+        /* HAMBURGER */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            z-index: 200;
+        }
+        .hamburger span {
+            display: block;
+            width: 28px;
+            height: 3px;
+            background: #f4f4f4;
+            transition: all 0.3s ease;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0; left: -100%;
+            width: 100%; height: 100vh;
+            background: #0a0a0a;
+            border-bottom: 2px solid #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            padding: 100px 40px 40px;
+            transition: left 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+            z-index: 150;
+        }
+        .mobile-menu.active { left: 0; }
+        .mobile-menu a {
+            font-size: 1.4rem;
+            padding: 18px 0;
+            border-bottom: 1px solid #333;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+        }
+        @media (max-width: 480px) {
+            .nav-logo { font-size: 1.25rem; }
+            .hamburger span { width: 24px; height: 2.5px; }
+            .mobile-menu { padding: 80px 25px 30px; }
+            .mobile-menu a { font-size: 1.25rem; }
+        }
+
+        /* HERO - Glitch completo */
+        .hero-about {
+            padding: 140px 0 100px;
+            border-bottom: 2px solid #f4f4f4;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(10,10,10,1) 70%);
+            text-align: left;
+        }
+
+        .glitch-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-about h1 {
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            line-height: 1;
+            letter-spacing: -2px;
+            margin-bottom: 30px;
+            position: relative;
+            animation: glitch-skew 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+        }
+
+        .hero-about h1::before,
+        .hero-about h1::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #0a0a0a;
+        }
+        .hero-about h1::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00ff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        .hero-about h1::after {
+            left: -2px;
+            text-shadow: -2px 0 #00ffff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+
+        .hero-about p {
+            font-size: 1.25rem;
+            max-width: 680px;
+            margin-bottom: 40px;
+        }
+
+        /* SEZIONI CON DIVISORIE */
+        .about-section {
+            padding: 80px 0;
+            border-bottom: 2px solid #f4f4f4; /* Linea divisoria tra sezioni */
+        }
+        .about-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title-left {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+            border-bottom: 2px solid #f4f4f4;
+            padding-bottom: 1rem;
+            display: inline-block;
+        }
+        .section-title-left::after {
+            content: '_';
+            animation: blink 1s infinite;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 40px;
+        }
+
+        .card {
+            border: 2px solid #f4f4f4;
+            background: #0a0a0a;
+            padding: 35px;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            background-color: #f4f4f4;
+            color: #0a0a0a;
+            transform: scale(1.03) rotate(-1deg);
+        }
+
+        .about-image {
+            width: 100%;
+            height: 380px;
+            object-fit: cover;
+            border: 2px solid #f4f4f4;
+            margin-bottom: 2.5rem;
+        }
+
+        /* SEZIONE FILOSOFIA - FULL WIDTH + LAYOUT LATO */
+        .philosophy-section {
+            padding: 80px 0;
+            background: repeating-linear-gradient(45deg, #0a0a0a, #0a0a0a 10px, #111 10px, #111 20px);
+            margin-left: -20px;
+            margin-right: -20px;
+            width: calc(100% + 40px);
+            border-bottom: 2px solid #f4f4f4;
+        }
+        .philosophy-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .philosophy-image {
+            width: 100%;
+            height: 420px;
+            object-fit: cover;
+            border: 2px solid #f4f4f4;
+        }
+        .philosophy-text h3 {
+            font-size: 1.6rem;
+            margin: 25px 0 12px 0;
+            border-bottom: 1px solid #f4f4f4;
+            padding-bottom: 8px;
+        }
+
+        /* SCROLL REVEAL */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* KEYFRAMES */
+        @keyframes glitch-skew {
+            0% { transform: skew(0deg); }
+            10% { transform: skew(-5deg); }
+            20% { transform: skew(5deg); }
+            30% { transform: skew(-2deg); }
+            40% { transform: skew(2deg); }
+            50% { transform: skew(0deg); }
+            100% { transform: skew(0deg); }
+        }
+        @keyframes glitch-anim {
+            0% { clip: rect(10px, 9999px, 86px, 0); transform: skew(0.5deg); }
+            5% { clip: rect(65px, 9999px, 31px, 0); transform: skew(0.5deg); }
+            10% { clip: rect(4px, 9999px, 14px, 0); transform: skew(0.1deg); }
+            15% { clip: rect(35px, 9999px, 5px, 0); transform: skew(0.6deg); }
+            20% { clip: rect(74px, 9999px, 100px, 0); transform: skew(0.8deg); }
+            25% { clip: rect(54px, 9999px, 1px, 0); transform: skew(0.3deg); }
+            30% { clip: rect(20px, 9999px, 60px, 0); transform: skew(0.9deg); }
+            35% { clip: rect(98px, 9999px, 45px, 0); transform: skew(0.4deg); }
+            40% { clip: rect(44px, 9999px, 20px, 0); transform: skew(0.7deg); }
+            45% { clip: rect(11px, 9999px, 80px, 0); transform: skew(0.2deg); }
+            50% { clip: rect(80px, 9999px, 15px, 0); transform: skew(0.5deg); }
+            55% { clip: rect(3px, 9999px, 60px, 0); transform: skew(0.8deg); }
+            60% { clip: rect(45px, 9999px, 90px, 0); transform: skew(0.3deg); }
+            65% { clip: rect(90px, 9999px, 33px, 0); transform: skew(0.6deg); }
+            70% { clip: rect(22px, 9999px, 77px, 0); transform: skew(0.1deg); }
+            75% { clip: rect(66px, 9999px, 10px, 0); transform: skew(0.9deg); }
+            80% { clip: rect(15px, 9999px, 55px, 0); transform: skew(0.4deg); }
+            85% { clip: rect(88px, 9999px, 25px, 0); transform: skew(0.7deg); }
+            90% { clip: rect(33px, 9999px, 88px, 0); transform: skew(0.2deg); }
+            95% { clip: rect(55px, 9999px, 40px, 0); transform: skew(0.5deg); }
+            100% { clip: rect(7px, 9999px, 70px, 0); transform: skew(0.8deg); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 100px, 0); transform: skew(0.8deg); }
+            5% { clip: rect(15px, 9999px, 45px, 0); transform: skew(0.2deg); }
+            10% { clip: rect(80px, 9999px, 10px, 0); transform: skew(0.7deg); }
+            15% { clip: rect(33px, 9999px, 77px, 0); transform: skew(0.4deg); }
+            20% { clip: rect(99px, 9999px, 22px, 0); transform: skew(0.9deg); }
+            25% { clip: rect(44px, 9999px, 88px, 0); transform: skew(0.1deg); }
+            30% { clip: rect(11px, 9999px, 55px, 0); transform: skew(0.6deg); }
+            35% { clip: rect(77px, 9999px, 33px, 0); transform: skew(0.3deg); }
+            40% { clip: rect(22px, 9999px, 99px, 0); transform: skew(0.8deg); }
+            45% { clip: rect(88px, 9999px, 11px, 0); transform: skew(0.5deg); }
+            50% { clip: rect(55px, 9999px, 66px, 0); transform: skew(0.2deg); }
+            55% { clip: rect(10px, 9999px, 44px, 0); transform: skew(0.7deg); }
+            60% { clip: rect(66px, 9999px, 80px, 0); transform: skew(0.4deg); }
+            65% { clip: rect(30px, 9999px, 20px, 0); transform: skew(0.9deg); }
+            70% { clip: rect(90px, 9999px, 60px, 0); transform: skew(0.1deg); }
+            75% { clip: rect(40px, 9999px, 90px, 0); transform: skew(0.6deg); }
+            80% { clip: rect(8px, 9999px, 30px, 0); transform: skew(0.3deg); }
+            85% { clip: rect(70px, 9999px, 70px, 0); transform: skew(0.8deg); }
+            90% { clip: rect(25px, 9999px, 15px, 0); transform: skew(0.5deg); }
+            95% { clip: rect(95px, 9999px, 50px, 0); transform: skew(0.2deg); }
+            100% { clip: rect(50px, 9999px, 8px, 0); transform: skew(0.7deg); }
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes pulse { 0% { text-shadow: 0 0 0px #f4f4f4; } 50% { text-shadow: 0 0 10px #f4f4f4; } 100% { text-shadow: 0 0 0px #f4f4f4; } }
+    </style>
+</head>
+<body>
+
+    <div class="noise-overlay"></div>
+
+    <nav>
+        <div class="container nav-content">
+            <div class="nav-logo">iMGN_WEB</div>
+            <div class="nav-links">
+                <a href="index.htm">Home</a>
+                <a href="chi-siamo.htm">Chi Siamo</a>
+                <a href="#">Servizi</a>
+                <a href="#">Contatti</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.htm" onclick="closeMenu()">Home</a>
+        <a href="chi-siamo.htm" onclick="closeMenu()">Chi Siamo</a>
+        <a href="#" onclick="closeMenu()">Servizi</a>
+        <a href="#" onclick="closeMenu()">Contatti</a>
+    </div>
+
+    <!-- HERO -->
+    <header class="hero-about" id="hero">
+        <div class="container">
+            <div class="glitch-wrapper">
+                <h1 data-text="CHI SIAMO">CHI SIAMO</h1>
+            </div>
+            <p>Siamo un piccolo studio di web design basato in Italia con una grande missione: rendere il design digitale di qualità accessibile a tutte le aziende, startup e professionisti che vogliono distinguersi online.</p>
+            <a href="#" class="btn">SCOPRI I NOSTRI SERVIZI</a>
+        </div>
+    </header>
+
+    <!-- Sezione 1 -->
+    <section class="about-section container scroll-reveal">
+        <img src="https://picsum.photos/id/1015/1200/600" alt="Studio web design" class="about-image">
+        <h2 class="section-title-left">LA NOSTRA STORIA</h2>
+        <div class="grid-2">
+            <div class="card scroll-reveal">
+                <h3>Nati in Italia, pensati per il mondo</h3>
+                <p>Siamo un piccolo team appassionato di design e tecnologia con base in Italia. Crediamo che ogni azienda meriti un sito web che racconti la sua storia con personalità e professionalità.</p>
+            </div>
+            <div class="card scroll-reveal">
+                <h3>Accessibilità come valore</h3>
+                <p>Il nostro obiettivo è abbattere le barriere economiche del web design di qualità. Offriamo soluzioni su misura a prezzi trasparenti e competitivi.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sezione Filosofia - FULL WIDTH + LAYOUT LATO -->
+    <section class="philosophy-section">
+        <div class="philosophy-content">
+            <img src="https://picsum.photos/id/201/1200/600" alt="Coding e design" class="philosophy-image scroll-reveal">
+            <div class="philosophy-text scroll-reveal">
+                <h2 class="section-title-left" style="border:none; margin-bottom: 10px;">LA NOSTRA FILOSOFIA</h2>
+                
+                <h3 class="scroll-reveal">Creatività senza template</h3>
+                <p class="scroll-reveal">Ogni progetto nasce da zero. Non usiamo template preconfezionati: ascoltiamo le tue esigenze e creiamo un’esperienza digitale unica, pensata esclusivamente per te.</p>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Sezione 3 -->
+    <section class="about-section container scroll-reveal">
+        <img src="https://picsum.photos/id/106/1200/600" alt="Workspace creativo" class="about-image">
+        <h2 class="section-title-left">PERCHÉ SCEGLIERCI</h2>
+        <div class="grid-2">
+            <div class="card scroll-reveal">
+                <h3>Piccolo studio, grande attenzione</h3>
+                <p>Essendo un team ridotto, seguiamo personalmente ogni progetto dalla prima idea fino al lancio e oltre.</p>
+            </div>
+            <div class="card scroll-reveal">
+                <h3>Radici italiane, sguardo globale</h3>
+                <p>Portiamo nel nostro lavoro il gusto estetico italiano unito alle migliori pratiche internazionali di web design.</p>
+    </section>
+
+    <section class="cta-newsletter" style="padding: 100px 0; border-top: 2px solid #f4f4f4;">
+        <div class="container border-box">
+            <h2 style="font-size: 2.2rem; margin-bottom: 15px; text-align: left;">Pronto a raccontare la tua storia?</h2>
+            <p style="max-width: 700px; margin-bottom: 30px;">Contattaci per una chiacchierata senza impegno. Insieme trasformeremo la tua idea in un’esperienza digitale che rappresenta davvero chi sei.</p>
+            <a href="#" class="btn">INIZIAMO UN PROGETTO INSIEME</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 iMGN_WEB DESIGN. ALL RIGHTS RESERVED. // BASED IN ITALY.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Hamburger
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        function closeMenu() {
+            mobileMenu.classList.remove('active');
+            hamburger.classList.remove('active');
+        }
+
+        // Scroll Reveal con stagger
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 80);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.scroll-reveal, .hero-about').forEach(el => observer.observe(el));
+    </script>
+
+</body>
+</html>
