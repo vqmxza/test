@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iMGN_WEB</title>
+    <link rel="icon" type="image/x-icon" href="https://image2url.com/r2/default/images/1775438610943-489b1a25-1851-4c64-9331-56b56bb310ad.png">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* RESET & BASE STYLES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* TEXTURE DI SFONDO (GRID + NOISE) */
+        body {
+            background-color: #0a0a0a;
+            color: #f4f4f4;
+            font-family: 'Space Mono', monospace;
+            line-height: 1.6;
+            overflow-x: hidden;
+            /* Griglia stile wireframe */
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-position: center center;
+        }
+
+        /* OVERLAY RUMORE (CRT/GRAIN EFFECT) */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.08;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        h1, h2, h3, .nav-logo {
+            font-family: 'Syncopate', sans-serif;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        a {
+            color: #f4f4f4;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .border-box {
+            border: 2px solid #f4f4f4;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            background: #0a0a0a;
+        }
+
+        /* BOTTONI CON ANIMAZIONE BRUTALISTA */
+        .btn {
+            display: inline-block;
+            background-color: #f4f4f4;
+            color: #0a0a0a;
+            padding: 15px 30px;
+            font-family: 'Syncopate', sans-serif;
+            font-weight: bold;
+            font-size: 1rem;
+            border: 2px solid #f4f4f4;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.1s linear;
+            box-shadow: 6px 6px 0px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:hover {
+            background-color: #0a0a0a;
+            color: #f4f4f4;
+            box-shadow: -6px -6px 0px #f4f4f4;
+            transform: translate(6px, 6px);
+        }
+
+        .btn:active {
+            box-shadow: 0px 0px 0px #f4f4f4;
+            transform: translate(0px, 0px);
+        }
+
+        /* NAVBAR */
+        nav {
+            border-bottom: 2px solid #f4f4f4;
+            padding: 20px 0;
+            background: #0a0a0a;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-logo {
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            animation: pulse 2s infinite;
+        }
+        .nav-links a {
+            margin-left: 20px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid transparent;
+        }
+        .nav-links a:hover {
+            background: #f4f4f4;
+            color: #0a0a0a;
+            padding: 5px;
+        }
+
+        /* HERO SECTION CON GLITCH */
+        .hero {
+            padding: 120px 0;
+            text-align: center;
+            border-bottom: 2px solid #f4f4f4;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(10,10,10,1) 60%);
+        }
+        
+        .glitch-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 1;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+            position: relative;
+            animation: glitch-skew 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+        }
+
+        /* Animazione Glitch sul Testo */
+        .hero h1::before,
+        .hero h1::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+        }
+        .hero h1::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00ff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        .hero h1::after {
+            left: -2px;
+            text-shadow: -2px 0 #00ffff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* MARQUEE (TESTO SCORREVOLE) */
+        .marquee {
+            width: 100%;
+            background-color: #f4f4f4;
+            color: #0a0a0a;
+            padding: 10px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            border-bottom: 2px solid #f4f4f4;
+            font-family: 'Syncopate', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: scroll 20s linear infinite;
+        }
+
+        /* GRID SECTIONS (ANIMATE) */
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            border-bottom: 2px solid #f4f4f4;
+            padding-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '_';
+            animation: blink 1s infinite;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 60px 0;
+        }
+
+        .card {
+            border: 2px solid #f4f4f4;
+            background: #0a0a0a;
+            padding: 30px;
+            text-align: left;
+            transition: all 0.2s ease;
+            position: relative;
+            /* Animazione di entrata */
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s forwards;
+        }
+        
+        /* Ritardi per le schede */
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.3s; }
+        .card:nth-child(3) { animation-delay: 0.5s; }
+
+        .card:hover {
+            background-color: #f4f4f4;
+            color: #0a0a0a;
+            transform: scale(1.05) rotate(-2deg);
+            box-shadow: 10px 10px 0px rgba(255, 255, 255, 0.2);
+            z-index: 10;
+        }
+        
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid currentColor;
+            padding-bottom: 5px;
+        }
+
+        /* FAQ SECTION */
+        .faq {
+            padding: 60px 0;
+            border-top: 2px solid #f4f4f4;
+            border-bottom: 2px solid #f4f4f4;
+            background: repeating-linear-gradient(
+                45deg,
+                #0a0a0a,
+                #0a0a0a 10px,
+                #111 10px,
+                #111 20px
+            );
+        }
+        .faq-item {
+            border-bottom: 1px solid #444;
+            padding: 20px 0;
+            transition: padding-left 0.3s ease;
+        }
+        .faq-item:hover {
+            padding-left: 15px;
+            border-left: 5px solid #f4f4f4;
+        }
+        .faq-item h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #f4f4f4;
+        }
+
+        /* NEWSLETTER & CTA */
+        .cta-newsletter {
+            padding: 80px 0;
+            text-align: center;
+        }
+        .newsletter-form {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+            max-width: 500px;
+            margin-inline: auto;
+        }
+        .newsletter-form input {
+            background: #0a0a0a;
+            border: 2px solid #f4f4f4;
+            color: #f4f4f4;
+            padding: 15px;
+            font-family: 'Space Mono', monospace;
+            flex-grow: 1;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .newsletter-form input:focus {
+            background: #f4f4f4;
+            color: #0a0a0a;
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 2px solid #f4f4f4;
+            padding: 40px 0;
+            text-align: center;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        /* KEYFRAMES (ANIMAZIONI) */
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        @keyframes pulse {
+            0% { text-shadow: 0 0 0px #f4f4f4; }
+            50% { text-shadow: 0 0 10px #f4f4f4; }
+            100% { text-shadow: 0 0 0px #f4f4f4; }
+        }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes glitch-anim {
+            0% { clip: rect(10px, 9999px, 86px, 0); transform: skew(0.5deg); }
+            5% { clip: rect(65px, 9999px, 31px, 0); transform: skew(0.5deg); }
+            10% { clip: rect(4px, 9999px, 14px, 0); transform: skew(0.1deg); }
+            15% { clip: rect(35px, 9999px, 5px, 0); transform: skew(0.6deg); }
+            20% { clip: rect(74px, 9999px, 100px, 0); transform: skew(0.8deg); }
+            25% { clip: rect(54px, 9999px, 1px, 0); transform: skew(0.3deg); }
+            30% { clip: rect(20px, 9999px, 60px, 0); transform: skew(0.9deg); }
+            35% { clip: rect(98px, 9999px, 45px, 0); transform: skew(0.4deg); }
+            40% { clip: rect(44px, 9999px, 20px, 0); transform: skew(0.7deg); }
+            45% { clip: rect(11px, 9999px, 80px, 0); transform: skew(0.2deg); }
+            50% { clip: rect(80px, 9999px, 15px, 0); transform: skew(0.5deg); }
+            55% { clip: rect(3px, 9999px, 60px, 0); transform: skew(0.8deg); }
+            60% { clip: rect(45px, 9999px, 90px, 0); transform: skew(0.3deg); }
+            65% { clip: rect(90px, 9999px, 33px, 0); transform: skew(0.6deg); }
+            70% { clip: rect(22px, 9999px, 77px, 0); transform: skew(0.1deg); }
+            75% { clip: rect(66px, 9999px, 10px, 0); transform: skew(0.9deg); }
+            80% { clip: rect(15px, 9999px, 55px, 0); transform: skew(0.4deg); }
+            85% { clip: rect(88px, 9999px, 25px, 0); transform: skew(0.7deg); }
+            90% { clip: rect(33px, 9999px, 88px, 0); transform: skew(0.2deg); }
+            95% { clip: rect(55px, 9999px, 40px, 0); transform: skew(0.5deg); }
+            100% { clip: rect(7px, 9999px, 70px, 0); transform: skew(0.8deg); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 100px, 0); transform: skew(0.8deg); }
+            5% { clip: rect(15px, 9999px, 45px, 0); transform: skew(0.2deg); }
+            10% { clip: rect(80px, 9999px, 10px, 0); transform: skew(0.7deg); }
+            15% { clip: rect(33px, 9999px, 77px, 0); transform: skew(0.4deg); }
+            20% { clip: rect(99px, 9999px, 22px, 0); transform: skew(0.9deg); }
+            25% { clip: rect(44px, 9999px, 88px, 0); transform: skew(0.1deg); }
+            30% { clip: rect(11px, 9999px, 55px, 0); transform: skew(0.6deg); }
+            35% { clip: rect(77px, 9999px, 33px, 0); transform: skew(0.3deg); }
+            40% { clip: rect(22px, 9999px, 99px, 0); transform: skew(0.8deg); }
+            45% { clip: rect(88px, 9999px, 11px, 0); transform: skew(0.5deg); }
+            50% { clip: rect(55px, 9999px, 66px, 0); transform: skew(0.2deg); }
+            55% { clip: rect(10px, 9999px, 44px, 0); transform: skew(0.7deg); }
+            60% { clip: rect(66px, 9999px, 80px, 0); transform: skew(0.4deg); }
+            65% { clip: rect(30px, 9999px, 20px, 0); transform: skew(0.9deg); }
+            70% { clip: rect(90px, 9999px, 60px, 0); transform: skew(0.1deg); }
+            75% { clip: rect(40px, 9999px, 90px, 0); transform: skew(0.6deg); }
+            80% { clip: rect(8px, 9999px, 30px, 0); transform: skew(0.3deg); }
+            85% { clip: rect(70px, 9999px, 70px, 0); transform: skew(0.8deg); }
+            90% { clip: rect(25px, 9999px, 15px, 0); transform: skew(0.5deg); }
+            95% { clip: rect(95px, 9999px, 50px, 0); transform: skew(0.2deg); }
+            100% { clip: rect(50px, 9999px, 8px, 0); transform: skew(0.7deg); }
+        }
+        @keyframes glitch-skew {
+            0% { transform: skew(0deg); }
+            10% { transform: skew(-5deg); }
+            20% { transform: skew(5deg); }
+            30% { transform: skew(-2deg); }
+            40% { transform: skew(2deg); }
+            50% { transform: skew(0deg); }
+            100% { transform: skew(0deg); }
+        }
+
+        /* === ANIMAZIONI SCROLL AGGIUNTE === */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .grid-3 .card.scroll-reveal {
+            transition-delay: 0.1s;
+        }
+        .grid-3 .card.scroll-reveal:nth-child(2) { transition-delay: 0.25s; }
+        .grid-3 .card.scroll-reveal:nth-child(3) { transition-delay: 0.4s; }
+
+        .hero.scrolled h1 {
+            animation: glitch-skew 1s linear 1;
+            text-shadow: 4px 4px 0 #ff00ff, -4px -4px 0 #00ffff;
+        }
+
+        /* HAMBURGER MENU */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 28px;
+            height: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .nav-toggle span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: #f4f4f4;
+            transition: all 0.3s ease;
+        }
+        .nav-toggle.active span:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+        }
+        .nav-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .nav-toggle.active span:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .nav-toggle {
+                display: flex;
+            }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: #0a0a0a;
+                border-bottom: 2px solid #f4f4f4;
+                padding: 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+            .nav-links.open {
+                display: flex;
+            }
+            .nav-links a {
+                margin: 10px 0;
+                font-size: 1.1rem;
+                display: block;
+            }
+            nav .container {
+                position: relative;
+            }
+
+            .hero {
+                padding: 60px 0;
+            }
+            .hero h1 {
+                letter-spacing: -1px;
+            }
+            .hero p {
+                font-size: 1rem;
+                padding: 0 10px;
+            }
+
+            .section-title {
+                font-size: 1.6rem;
+            }
+
+            .grid-3 {
+                grid-template-columns: 1fr;
+                padding: 30px 0;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .faq {
+                padding: 30px 0;
+            }
+            .border-box {
+                padding: 1rem;
+            }
+
+            .cta-newsletter {
+                padding: 40px 0;
+            }
+            .cta-newsletter h2 {
+                font-size: 1.4rem !important;
+            }
+            .newsletter-form {
+                flex-direction: column;
+            }
+            .newsletter-form input,
+            .newsletter-form .btn {
+                width: 100%;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.85rem;
+            }
+
+            .marquee {
+                font-size: 0.9rem;
+            }
+
+            footer {
+                padding: 25px 0;
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-logo {
+                font-size: 1.1rem;
+            }
+            .hero {
+                padding: 40px 0;
+            }
+            .section-title {
+                font-size: 1.3rem;
+            }
+            .container {
+                padding: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="noise-overlay"></div>
+
+    <nav>
+        <div class="container nav-content">
+            <div class="nav-logo">iMGN_WEB</div>
+            <button class="nav-toggle" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="#">Chi Siamo</a>
+                <a href="#">Servizi</a>
+                <a href="#">Contatti</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero" id="hero">
+        <div class="container">
+            <div class="glitch-wrapper">
+                <h1 data-text="WEB DESIGN ON DEMAND">WEB DESIGN<br>ON DEMAND</h1>
+            </div>
+            <p>Design creativo e funzionale, realizzato su misura per te. Qualità professionale, attenzione al dettaglio e prezzi accessibili per dare vita ai tuoi progetti digitali.</p>
+            <a href="#" class="btn">RICHIEDI PREVENTIVO</a>
+        </div>
+    </header>
+
+    <div class="marquee">
+        <div class="marquee-content">
+            +++ DESIGN CREATIVO +++ SU MISURA +++ ESPERIENZE UNICHE +++ ALTO IMPATTO VISIVO +++ CODICE PULITO +++ DESIGN CREATIVO +++ SU MISURA +++ ESPERIENZE UNICHE +++ DESIGN CREATIVO +++ SU MISURA +++ ESPERIENZE UNICHE +++ ALTO IMPATTO VISIVO +++ CODICE PULITO +++ DESIGN CREATIVO +++ SU MISURA +++ ESPERIENZE UNICHE +++
+        </div>
+    </div>
+
+    <section class="container">
+        <div class="grid-3">
+            <div class="card scroll-reveal">
+                <h3>// SITI PERSONALIZZATI</h3>
+                <p>Nessun template standard. Creiamo design unici e originali che riflettono la personalità del tuo brand e catturano l’attenzione.</p>
+            </div>
+            <div class="card scroll-reveal">
+                <h3>// RESPONSIVE DESIGN</h3>
+                <p>Un’esperienza fluida e armoniosa su ogni dispositivo. Il tuo sito si adatta perfettamente a desktop, tablet e smartphone.</p>
+            </div>
+            <div class="card scroll-reveal">
+                <h3>// SUPPORTO RAPIDO</h3>
+                <p>Ti accompagniamo in ogni fase del progetto con assistenza tempestiva e dedicata, anche dopo il lancio.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="container scroll-reveal" style="text-align: center;" id="why-section">
+        <h2 class="section-title">PERCHÉ SCEGLIERCI</h2>
+        <div class="grid-3" style="padding-top: 0; text-align: left;">
+            <div class="card scroll-reveal">
+                <h3>[01] PREZZI COMPETITIVI</h3>
+                <p>Qualità elevata a costi accessibili. La soluzione ideale per chi vuole un sito professionale senza spendere eccessivamente.</p>
+            </div>
+            <div class="card scroll-reveal">
+                <h3>[02] SU MISURA</h3>
+                <p>Ascoltiamo le tue idee e trasformiamo la tua visione in un’esperienza digitale autentica e su misura per i tuoi obiettivi.</p>
+            </div>
+            <div class="card scroll-reveal">
+                <h3>[03] CONSEGNE RAPIDE</h3>
+                <p>Processi ottimizzati per consegnarti il progetto nei tempi concordati, con cura e attenzione per ogni dettaglio.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq scroll-reveal">
+        <div class="container">
+            <h2 class="section-title" style="border:none; text-align:left; margin-bottom: 0;">FAQ</h2>
+            <div class="border-box">
+                <div class="faq-item">
+                    <h3>> I VOSTRI PREZZI SONO DAVVERO ACCESSIBILI?</h3>
+                    <p>Sì. Ottimizziamo i processi di sviluppo per offrire soluzioni di qualità professionale a prezzi competitivi.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>> QUANTO TEMPO SERVE PER UN SITO?</h3>
+                    <p>Dipende dalla complessità del progetto, ma una landing page o un sito vetrina vengono generalmente consegnati in 7-10 giorni lavorativi.</p>
+                </div>
+                <div class="faq-item" style="border-bottom:none;">
+                    <h3>> FATE ANCHE MANUTENZIONE?</h3>
+                    <p>Certamente. Offriamo pacchetti di supporto e manutenzione per tenere il tuo sito sempre aggiornato e performante.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-newsletter scroll-reveal">
+        <div class="container border-box">
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">PRONTO A DARE VITA AL TUO SITO?</h2>
+            <p>Iscriviti alla newsletter per ricevere ispirazione, offerte esclusive e aggiornamenti sul mondo del web design creativo.</p>
+            
+            <form class="newsletter-form">
+                <input type="email" placeholder="INSERISCI LA TUA EMAIL..." required>
+                <button type="submit" class="btn">ISCRIVITI</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 NEO_WEB DESIGN. ALL RIGHTS RESERVED. // Y2K BRUTALISM STYLE // BASED IN ITALY.</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPT PER LE ANIMAZIONI ALLO SCROLL -->
+    <script>
+        // Mobile nav toggle
+        const navToggle = document.querySelector('.nav-toggle');
+        const navLinks = document.querySelector('.nav-links');
+        navToggle.addEventListener('click', () => {
+            navToggle.classList.toggle('active');
+            navLinks.classList.toggle('open');
+        });
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navToggle.classList.remove('active');
+                navLinks.classList.remove('open');
+            });
+        });
+
+        // Intersection Observer per animazioni allo scroll
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: "0px 0px -60px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Aggiunge la classe visible con un piccolo ritardo per effetto stagger
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 80);
+
+                    // Effetto extra sul titolo hero
+                    if (entry.target.id === 'hero') {
+                        document.getElementById('hero').classList.add('scrolled');
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Osserva tutti gli elementi che devono animarsi
+        document.querySelectorAll('.scroll-reveal, .hero').forEach(element => {
+            observer.observe(element);
+        });
+
+        // Parallax leggero sul background hero
+        window.addEventListener('scroll', () => {
+            const hero = document.querySelector('.hero');
+            const scrollPosition = window.scrollY * 0.04;
+            if (scrollPosition < 300) {
+                hero.style.backgroundPositionY = `${30 + scrollPosition}px`;
+            }
+        });
+    </script>
+
+</body>
+</html>
