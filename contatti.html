@@ -174,19 +174,34 @@
             animation: glitch-anim2 5s infinite linear alternate-reverse;
         }
 
-        /* Google Form Container */
+        /* Google Form Container - Stile Brutalista */
         .google-form-container {
-            border: 2px solid #f4f4f4;
+            border: 3px solid #f4f4f4;
             background: #0a0a0a;
-            padding: 25px;
-            margin: 40px auto;
+            padding: 30px 25px 20px;
+            margin: 50px auto;
             max-width: 950px;
+            position: relative;
         }
 
         .google-form-container iframe {
             width: 100%;
-            height: 1050px;
+            height: 1100px;
             border: none;
+            filter: contrast(1.1) brightness(0.92);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            border-bottom: 2px solid #f4f4f4;
+            padding-bottom: 1rem;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: '_';
+            animation: blink 1s infinite;
         }
 
         .scroll-reveal {
@@ -199,7 +214,7 @@
             transform: translateY(0);
         }
 
-        /* KEYFRAMES GLITCH */
+        /* KEYFRAMES */
         @keyframes glitch-skew {
             0% { transform: skew(0deg); }
             10% { transform: skew(-5deg); }
@@ -236,11 +251,8 @@
             90% { clip: rect(25px,9999px,15px,0); transform: skew(0.5deg); }
             100% { clip: rect(50px,9999px,8px,0); transform: skew(0.7deg); }
         }
-        @keyframes pulse {
-            0% { text-shadow: 0 0 0px #f4f4f4; }
-            50% { text-shadow: 0 0 10px #f4f4f4; }
-            100% { text-shadow: 0 0 0px #f4f4f4; }
-        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes pulse { 0% { text-shadow: 0 0 0px #f4f4f4; } 50% { text-shadow: 0 0 10px #f4f4f4; } 100% { text-shadow: 0 0 0px #f4f4f4; } }
     </style>
 </head>
 <body>
@@ -282,15 +294,15 @@
         </div>
     </header>
 
-    <!-- GOOGLE FORM INTEGRATA -->
+    <!-- GOOGLE FORM STILIZZATA -->
     <section class="contact-form container scroll-reveal">
-        <h2 class="section-title" style="text-align: center; margin-bottom: 30px;">Scrivi un messaggio</h2>
+        <h2 class="section-title">SCRIVI UN MESSAGGIO</h2>
         
         <div class="google-form-container">
             <iframe 
                 src="https://docs.google.com/forms/d/e/1FAIpQLSdZHvWI5OkSCjVXXtX67dFx8lfrhyOWAkVIZw9KOsxESJvNDQ/viewform?embedded=true" 
                 width="100%" 
-                height="1050" 
+                height="1120" 
                 frameborder="0" 
                 marginheight="0" 
                 marginwidth="0">
